@@ -26,14 +26,30 @@ const user = new User({ name: 'new record', age: 0 });
 
 // user.events.trigger('change');
 
-// A quick reminder of accessors:
-class Person {
-  constructor(public firstName: string, public lastName: string) {}
+// // A quick reminder of accessors:
+// class Person {
+//   constructor(public firstName: string, public lastName: string) {}
 
-  get fullName(): string {
-    return `${this.firstName} ${this.lastName}`;
-  }
-}
+//   get fullName(): string {
+//     return `${this.firstName} ${this.lastName}`;
+//   }
+// }
 
-const person = new Person('Anrey', 'Makarevich');
-console.log(person.fullName); //Anrey Makarevich
+// const person = new Person('Anrey', 'Makarevich');
+// console.log(person.fullName); //Anrey Makarevich
+
+// user.on('change', () => {
+//   console.log('user was changed'); //
+// });
+
+// console.log(user.get('name')); //
+
+// A quick reminder of 'this' works in JS:
+const colors = {
+  color: 'red',
+  printColor() {
+    console.log(this.color); //
+  },
+};
+
+colors.printColor();

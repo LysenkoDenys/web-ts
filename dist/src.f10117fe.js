@@ -5529,6 +5529,27 @@ var User = /** @class */function () {
     this.sync = new Sync_1.Sync(rootUrl);
     this.attributes = new Attributes_1.Attributes(attrs);
   }
+  Object.defineProperty(User.prototype, "on", {
+    get: function get() {
+      return this.events.on;
+    },
+    enumerable: false,
+    configurable: true
+  });
+  Object.defineProperty(User.prototype, "trigger", {
+    get: function get() {
+      return this.events.trigger;
+    },
+    enumerable: false,
+    configurable: true
+  });
+  Object.defineProperty(User.prototype, "get", {
+    get: function get() {
+      return this.attributes.trigger;
+    },
+    enumerable: false,
+    configurable: true
+  });
   return User;
 }();
 exports.User = User;
@@ -5559,23 +5580,27 @@ var user = new User_1.User({
 //   console.log('we change it!'); //
 // });
 // user.events.trigger('change');
-// A quick reminder of accessors:
-var Person = /** @class */function () {
-  function Person(firstName, lastName) {
-    this.firstName = firstName;
-    this.lastName = lastName;
+// // A quick reminder of accessors:
+// class Person {
+//   constructor(public firstName: string, public lastName: string) {}
+//   get fullName(): string {
+//     return `${this.firstName} ${this.lastName}`;
+//   }
+// }
+// const person = new Person('Anrey', 'Makarevich');
+// console.log(person.fullName); //Anrey Makarevich
+// user.on('change', () => {
+//   console.log('user was changed'); //
+// });
+// console.log(user.get('name')); //
+// A quick reminder of 'this' works in JS:
+var colors = {
+  color: 'red',
+  printColor: function printColor() {
+    console.log(this.color); //
   }
-  Object.defineProperty(Person.prototype, "fullName", {
-    get: function get() {
-      return "".concat(this.firstName, " ").concat(this.lastName);
-    },
-    enumerable: false,
-    configurable: true
-  });
-  return Person;
-}();
-var person = new Person('Anrey', 'Makarevich');
-console.log(person.fullName); //Anrey Makarevich
+};
+colors.printColor();
 },{"./models/User":"src/models/User.ts"}],"C:/Users/Lysenko/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -5601,7 +5626,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60545" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60827" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
