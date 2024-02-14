@@ -20,8 +20,20 @@ const user = new User({ name: 'new record', age: 0 });
 
 // user.save();
 
-user.events.on('change', () => {
-  console.log('we change it!'); //
-});
+// user.events.on('change', () => {
+//   console.log('we change it!'); //
+// });
 
-user.events.trigger('change');
+// user.events.trigger('change');
+
+// A quick reminder of accessors:
+class Person {
+  constructor(public firstName: string, public lastName: string) {}
+
+  get fullName(): string {
+    return `${this.firstName} ${this.lastName}`;
+  }
+}
+
+const person = new Person('Anrey', 'Makarevich');
+console.log(person.fullName); //Anrey Makarevich

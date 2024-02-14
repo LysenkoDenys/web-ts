@@ -1,21 +1,20 @@
 import { Eventing } from './Eventing';
+import { Sync } from './Sync';
+import { Attributes } from './Attributes';
 export interface UserProps {
   name?: string; // optional properties to ability change only one property at the time
   age?: number; // optional properties to ability change only one property at the time
   id?: number; // optional properties to ability change only one property at the time
 }
 
+const rootUrl = 'http://localhost:3000/users';
+
 export class User {
   public events: Eventing = new Eventing();
+  public sync: Sync<UserProps> = new Sync<UserProps>(rootUrl);
+  public attributes: Attributes<UserProps>;
 
-  constructor(private data: UserProps) {}
-
-  get(propName: string): number | string {
-    return this.data[propName];
-  }
-
-  set(update: UserProps): void {
-    Object.assign(this.data, update); // Object.assign([previous object], [new data to assign])
-    // this is going to get overwritten and replaced data
+  constructor(attrs: UserProps) {
+    this.attributes = new Attributes<UserProps>(attrs);
   }
 }
