@@ -126,22 +126,23 @@ Object.defineProperty(exports, "__esModule", {
 exports.Eventing = void 0;
 var Eventing = /** @class */function () {
   function Eventing() {
+    var _this = this;
     this.events = {};
+    this.on = function (eventName, callback) {
+      var handlers = _this.events[eventName] || [];
+      handlers.push(callback);
+      _this.events[eventName] = handlers;
+    };
+    this.trigger = function (eventName) {
+      var handlers = _this.events[eventName];
+      if (!handlers || handlers.length === 0) {
+        return;
+      }
+      handlers.forEach(function (callback) {
+        callback();
+      });
+    };
   }
-  Eventing.prototype.on = function (eventName, callback) {
-    var handlers = this.events[eventName] || [];
-    handlers.push(callback);
-    this.events[eventName] = handlers;
-  };
-  Eventing.prototype.trigger = function (eventName) {
-    var handlers = this.events[eventName];
-    if (!handlers || handlers.length === 0) {
-      return;
-    }
-    handlers.forEach(function (callback) {
-      callback();
-    });
-  };
   return Eventing;
 }();
 exports.Eventing = Eventing;
@@ -5500,14 +5501,18 @@ Object.defineProperty(exports, "__esModule", {
 exports.Attributes = void 0;
 var Attributes = /** @class */function () {
   function Attributes(data) {
+    var _this = this;
     this.data = data;
+    this.get = function (key) {
+      return _this.data[key];
+    };
+    this.set = function (update) {
+      Object.assign(_this.data, update); // Object.assign([previous object], [new data to assign])
+      // this is going to get overwritten and replaced data
+    };
   }
-  Attributes.prototype.get = function (key) {
-    return this.data[key];
-  };
-  Attributes.prototype.set = function (update) {
-    Object.assign(this.data, update); // Object.assign([previous object], [new data to assign])
-    // this is going to get overwritten and replaced data
+  Attributes.prototype.getAll = function () {
+    return this.data;
   };
   return Attributes;
 }();
@@ -5545,11 +5550,33 @@ var User = /** @class */function () {
   });
   Object.defineProperty(User.prototype, "get", {
     get: function get() {
-      return this.attributes.trigger;
+      return this.attributes.get;
     },
     enumerable: false,
     configurable: true
   });
+  User.prototype.set = function (update) {
+    this.attributes.set(update);
+    this.events.trigger('change');
+  };
+  User.prototype.fetch = function () {
+    var _this = this;
+    var id = this.get('id');
+    if (typeof id !== 'number') {
+      throw new Error('Cannot fetch without an id');
+    }
+    this.sync.fetch(id).then(function (response) {
+      _this.set(response.data);
+    });
+  };
+  User.prototype.save = function () {
+    var _this = this;
+    this.sync.save(this.attributes.getAll()).then(function (response) {
+      _this.trigger('save');
+    }).catch(function () {
+      _this.trigger('error');
+    });
+  };
   return User;
 }();
 exports.User = User;
@@ -5567,8 +5594,9 @@ var User_1 = require("./models/User");
 // });
 // axios.get('http://localhost:3000/users/1');
 var user = new User_1.User({
-  name: 'new record',
-  age: 0
+  id: 1,
+  name: 'John',
+  age: 120
 });
 // user.fetch();
 // setTimeout(() => {
@@ -5593,14 +5621,30 @@ var user = new User_1.User({
 //   console.log('user was changed'); //
 // });
 // console.log(user.get('name')); //
-// A quick reminder of 'this' works in JS:
-var colors = {
-  color: 'red',
-  printColor: function printColor() {
-    console.log(this.color); //
-  }
-};
-colors.printColor();
+// user.on('change', () => {
+//   console.log('User was changed, we probably need to update some HTML'); //
+// });
+// user.on('change', () => {
+//   console.log(user); //
+// });
+user.on('save', function () {
+  console.log(user); //
+});
+// user.trigger('change');
+// user.set({ name: 'New name' });
+// user.fetch();
+user.save();
+// // A quick reminder of 'this' works in JS:
+// const colors = {
+//   color: 'red',
+//   printColor() {
+//     console.log(this.color); // this equal that is left of function call
+//   },
+// };
+// colors.printColor(); // red
+// const printColor = colors.printColor;
+// printColor(); // error because left from printColor() is nothing (undefined)
+// npm run start:parcel
 },{"./models/User":"src/models/User.ts"}],"C:/Users/Lysenko/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -5626,7 +5670,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60827" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55303" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

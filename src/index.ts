@@ -8,7 +8,7 @@ import { User } from './models/User';
 
 // axios.get('http://localhost:3000/users/1');
 
-const user = new User({ name: 'new record', age: 0 });
+const user = new User({ id: 1, name: 'John', age: 120 });
 
 // user.fetch();
 
@@ -43,13 +43,33 @@ const user = new User({ name: 'new record', age: 0 });
 // });
 
 // console.log(user.get('name')); //
+// user.on('change', () => {
+//   console.log('User was changed, we probably need to update some HTML'); //
+// });
 
-// A quick reminder of 'this' works in JS:
-const colors = {
-  color: 'red',
-  printColor() {
-    console.log(this.color); //
-  },
-};
+// user.on('change', () => {
+//   console.log(user); //
+// });
 
-colors.printColor();
+user.on('save', () => {
+  console.log(user); //
+});
+
+// user.trigger('change');
+// user.set({ name: 'New name' });
+// user.fetch();
+user.save();
+
+// // A quick reminder of 'this' works in JS:
+// const colors = {
+//   color: 'red',
+//   printColor() {
+//     console.log(this.color); // this equal that is left of function call
+//   },
+// };
+
+// colors.printColor(); // red
+// const printColor = colors.printColor;
+// printColor(); // error because left from printColor() is nothing (undefined)
+
+// npm run start:parcel
