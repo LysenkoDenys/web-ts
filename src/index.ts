@@ -1,5 +1,5 @@
 // import axios, { AxiosResponse } from 'axios';
-// import { User } from './models/User';
+import { User } from './models/User';
 // import { Collection } from './models/Collection';
 import { UserForm } from './views/UserForm';
 
@@ -93,7 +93,9 @@ import { UserForm } from './views/UserForm';
 
 // collection.fetch();
 
-const userForm = new UserForm(document.getElementById('root'));
+const user = User.buildUser({ name: 'NAME', age: 20 });
+
+const userForm = new UserForm(document.getElementById('root')!, user);
 
 userForm.render();
 
