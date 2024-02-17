@@ -1,5 +1,7 @@
-// import axios from 'axios';
-import { User } from './models/User';
+// import axios, { AxiosResponse } from 'axios';
+// import { User } from './models/User';
+// import { Collection } from './models/Collection';
+import { UserForm } from './views/UserForm';
 
 // axios.post('http://localhost:3000/users', {
 //   name: 'Richard',
@@ -8,7 +10,8 @@ import { User } from './models/User';
 
 // axios.get('http://localhost:3000/users/1');
 
-const user = new User({ id: 1, name: 'John', age: 120 });
+// const user = new User({ id: 1, name: 'John', age: 120 });
+// const user = User.buildUser({ id: 1 });
 
 // user.fetch();
 
@@ -35,8 +38,8 @@ const user = new User({ id: 1, name: 'John', age: 120 });
 //   }
 // }
 
-// const person = new Person('Anrey', 'Makarevich');
-// console.log(person.fullName); //Anrey Makarevich
+// const person = new Person('John', 'Wane');
+// console.log(person.fullName); //John Wane
 
 // user.on('change', () => {
 //   console.log('user was changed'); //
@@ -51,14 +54,14 @@ const user = new User({ id: 1, name: 'John', age: 120 });
 //   console.log(user); //
 // });
 
-user.on('save', () => {
-  console.log(user); //
-});
+// user.on('save', () => {
+//   console.log(user); //
+// });
 
 // user.trigger('change');
 // user.set({ name: 'New name' });
 // user.fetch();
-user.save();
+// user.save();
 
 // // A quick reminder of 'this' works in JS:
 // const colors = {
@@ -72,4 +75,27 @@ user.save();
 // const printColor = colors.printColor;
 // printColor(); // error because left from printColor() is nothing (undefined)
 
+// user.on('change', () => {
+//   console.log(user); //
+// });
+
+// user.fetch();
+
+// axios.get('http://localhost:3000/users').then((response: AxiosResponse) => {
+//   console.log(response.data); //
+// });
+
+// const collection = User.buildUserCollection();
+
+// collection.on('change', () => {
+//   console.log(collection); //
+// });
+
+// collection.fetch();
+
+const userForm = new UserForm(document.getElementById('root'));
+
+userForm.render();
+
 // npm run start:parcel
+// npm run start:db
