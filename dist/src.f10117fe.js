@@ -5684,7 +5684,54 @@ var User = /** @class */function (_super) {
   return User;
 }(Model_1.Model);
 exports.User = User;
-},{"./Model":"src/models/Model.ts","./Attributes":"src/models/Attributes.ts","./ApiSync":"src/models/ApiSync.ts","./Eventing":"src/models/Eventing.ts","./Collection":"src/models/Collection.ts"}],"src/views/View.ts":[function(require,module,exports) {
+},{"./Model":"src/models/Model.ts","./Attributes":"src/models/Attributes.ts","./ApiSync":"src/models/ApiSync.ts","./Eventing":"src/models/Eventing.ts","./Collection":"src/models/Collection.ts"}],"src/views/CollectionView.ts":[function(require,module,exports) {
+"use strict";
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CollectionView = void 0;
+var CollectionView = /*#__PURE__*/function () {
+  function CollectionView(parent, collection) {
+    _classCallCheck(this, CollectionView);
+    this.parent = parent;
+    this.collection = collection;
+  }
+  _createClass(CollectionView, [{
+    key: "render",
+    value: function render() {
+      this.parent.innerHTML = '';
+      var templateElement = document.createElement('template');
+      var _iterator = _createForOfIteratorHelper(this.collection.models),
+        _step;
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var model = _step.value;
+          var itemParent = document.createElement('div');
+          this.renderItem(model, itemParent);
+          templateElement.content.append(itemParent);
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+      this.parent.append(templateElement.content);
+    }
+  }]);
+  return CollectionView;
+}();
+exports.CollectionView = CollectionView;
+},{}],"src/views/View.ts":[function(require,module,exports) {
 "use strict";
 
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
@@ -5708,9 +5755,20 @@ var View = /*#__PURE__*/function () {
     _classCallCheck(this, View);
     this.parent = parent;
     this.model = model;
+    this.regions = {};
     this.bindModel();
   }
   _createClass(View, [{
+    key: "regionsMap",
+    value: function regionsMap() {
+      return {};
+    }
+  }, {
+    key: "eventsMap",
+    value: function eventsMap() {
+      return {};
+    }
+  }, {
     key: "bindModel",
     value: function bindModel() {
       var _this = this;
@@ -5735,6 +5793,21 @@ var View = /*#__PURE__*/function () {
         _loop(eventKey);
       }
     }
+  }, {
+    key: "mapRegions",
+    value: function mapRegions(fragment) {
+      var regionsMap = this.regionsMap();
+      for (var key in regionsMap) {
+        var selector = regionsMap[key];
+        var element = fragment.querySelector(selector);
+        if (element) {
+          this.regions[key] = element;
+        }
+      }
+    }
+  }, {
+    key: "onRender",
+    value: function onRender() {}
     //render is to take our template and append
     // it as a child in the element:
   }, {
@@ -5744,13 +5817,15 @@ var View = /*#__PURE__*/function () {
       var templateElement = document.createElement('template');
       templateElement.innerHTML = this.template();
       this.bindEvents(templateElement.content);
+      this.mapRegions(templateElement.content);
+      this.onRender();
       this.parent.append(templateElement.content);
     }
   }]);
   return View;
 }();
 exports.View = View;
-},{}],"src/views/UserForm.ts":[function(require,module,exports) {
+},{}],"src/views/UserShow.ts":[function(require,module,exports) {
 "use strict";
 
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
@@ -5769,54 +5844,61 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Objec
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.UserForm = void 0;
+exports.UserShow = void 0;
 var View_1 = require("./View");
-var UserForm = /*#__PURE__*/function (_View_1$View) {
-  _inherits(UserForm, _View_1$View);
-  function UserForm() {
-    var _this;
-    _classCallCheck(this, UserForm);
-    _this = _callSuper(this, UserForm, arguments);
-    _this.onSetAgeClick = function () {
-      _this.model.setRandomAge();
-    };
-    _this.onSetNameClick = function () {
-      var input = _this.parent.querySelector('input');
-      if (input) {
-        var name = input.value;
-        _this.model.set({
-          name: name
-        });
-      }
-    };
-    _this.onSaveClick = function () {
-      _this.model.save();
-    };
-    return _this;
+var UserShow = /*#__PURE__*/function (_View_1$View) {
+  _inherits(UserShow, _View_1$View);
+  function UserShow() {
+    _classCallCheck(this, UserShow);
+    return _callSuper(this, UserShow, arguments);
   }
-  _createClass(UserForm, [{
-    key: "eventsMap",
-    value: function eventsMap() {
-      this.model.get('name');
-      return {
-        'click:.set-age': this.onSetAgeClick,
-        'click:.set-name': this.onSetNameClick,
-        'click:.save-model': this.onSaveClick
-      };
-    }
-  }, {
+  _createClass(UserShow, [{
     key: "template",
     value: function template() {
-      return "\n    <div>\n      <input placeholder=\"".concat(this.model.get('name'), "\"/>\n      <button class=\"set-name\">Change Name</button>\n      <button class=\"set-age\">Set Random Age</button>\n      <button class=\"save-model\">Save User</button>\n    </div>\n    ");
+      return "\n    <div>\n    <h1>User Detail</h1>\n     <div>User name: ".concat(this.model.get('name'), "</div>\n     <div>User age: ").concat(this.model.get('age'), "</div>\n    </div>\n    ");
     }
   }]);
-  return UserForm;
+  return UserShow;
 }(View_1.View);
-exports.UserForm = UserForm;
-// <h1>User Form</h1>
-// <div>User name: ${this.model.get('name')}</div>
-// <div>User age: ${this.model.get('age')}</div>
-},{"./View":"src/views/View.ts"}],"src/index.ts":[function(require,module,exports) {
+exports.UserShow = UserShow;
+},{"./View":"src/views/View.ts"}],"src/views/UserList.ts":[function(require,module,exports) {
+"use strict";
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.UserList = void 0;
+var CollectionView_1 = require("./CollectionView");
+var UserShow_1 = require("./UserShow");
+var UserList = /*#__PURE__*/function (_CollectionView_1$Col) {
+  _inherits(UserList, _CollectionView_1$Col);
+  function UserList() {
+    _classCallCheck(this, UserList);
+    return _callSuper(this, UserList, arguments);
+  }
+  _createClass(UserList, [{
+    key: "renderItem",
+    value: function renderItem(model, itemParent) {
+      new UserShow_1.UserShow(itemParent, model).render();
+    }
+  }]);
+  return UserList;
+}(CollectionView_1.CollectionView);
+exports.UserList = UserList;
+},{"./CollectionView":"src/views/CollectionView.ts","./UserShow":"src/views/UserShow.ts"}],"src/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5824,8 +5906,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 // import axios, { AxiosResponse } from 'axios';
 var User_1 = require("./models/User");
-// import { Collection } from './models/Collection';
-var UserForm_1 = require("./views/UserForm");
+var Collection_1 = require("./models/Collection");
+// import { UserForm } from './views/UserForm';
+// import { UserEdit } from './views/UserEdit';
+var UserList_1 = require("./views/UserList");
 // axios.post('http://localhost:3000/users', {
 //   name: 'Richard',
 //   age: 20,
@@ -5891,23 +5975,39 @@ var UserForm_1 = require("./views/UserForm");
 //   console.log(collection); //
 // });
 // collection.fetch();
-var user = User_1.User.buildUser({
-  name: 'NAME',
-  age: 20
+// const user = User.buildUser({ name: 'NAME', age: 20 });
+// const userForm = new UserForm(document.getElementById('root')!, user);
+// //or in longer implicit way:
+// const root = document.getElementById('root');
+// if (root) {
+//   const userForm = new UserForm(root, user);
+//   userForm.render();
+// } else {
+//   throw new Error('Root element not found');
+// }
+// userForm.render();
+// const user = User.buildUser({ name: 'NAME', age: 20 });
+// const root = document.getElementById('root');
+// if (root) {
+//   const userEdit = new UserEdit(root, user);
+//   userEdit.render();
+//   console.log(userEdit); //
+// } else {
+//   throw new Error('Root element not found');
+// }
+var users = new Collection_1.Collection('http://localhost:3000/users', function (json) {
+  return User_1.User.buildUser(json);
 });
-var userForm = new UserForm_1.UserForm(document.getElementById('root'), user);
-//or in longer implicit way:
-var root = document.getElementById('root');
-if (root) {
-  var _userForm = new UserForm_1.UserForm(root, user);
-  _userForm.render();
-} else {
-  throw new Error('Root element not found');
-}
-userForm.render();
+users.on('change', function () {
+  var root = document.getElementById('root');
+  if (root) {
+    new UserList_1.UserList(root, users).render();
+  }
+});
+users.fetch();
 // npm run start:parcel
 // npm run start:db
-},{"./models/User":"src/models/User.ts","./views/UserForm":"src/views/UserForm.ts"}],"C:/Users/Lysenko/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./models/User":"src/models/User.ts","./models/Collection":"src/models/Collection.ts","./views/UserList":"src/views/UserList.ts"}],"C:/Users/Lysenko/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -5932,7 +6032,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60505" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62115" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

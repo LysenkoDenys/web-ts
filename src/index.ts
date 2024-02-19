@@ -1,7 +1,9 @@
 // import axios, { AxiosResponse } from 'axios';
-import { User } from './models/User';
-// import { Collection } from './models/Collection';
-import { UserForm } from './views/UserForm';
+import { User, UserProps } from './models/User';
+import { Collection } from './models/Collection';
+// import { UserForm } from './views/UserForm';
+// import { UserEdit } from './views/UserEdit';
+import { UserList } from './views/UserList';
 
 // axios.post('http://localhost:3000/users', {
 //   name: 'Richard',
@@ -93,19 +95,48 @@ import { UserForm } from './views/UserForm';
 
 // collection.fetch();
 
-const user = User.buildUser({ name: 'NAME', age: 20 });
+// const user = User.buildUser({ name: 'NAME', age: 20 });
 
-const userForm = new UserForm(document.getElementById('root')!, user);
-//or in longer implicit way:
-const root = document.getElementById('root');
-if (root) {
-  const userForm = new UserForm(root, user);
-  userForm.render();
-} else {
-  throw new Error('Root element not found');
-}
+// const userForm = new UserForm(document.getElementById('root')!, user);
+// //or in longer implicit way:
+// const root = document.getElementById('root');
+// if (root) {
+//   const userForm = new UserForm(root, user);
+//   userForm.render();
+// } else {
+//   throw new Error('Root element not found');
+// }
 
-userForm.render();
+// userForm.render();
+
+// const user = User.buildUser({ name: 'NAME', age: 20 });
+
+// const root = document.getElementById('root');
+
+// if (root) {
+//   const userEdit = new UserEdit(root, user);
+//   userEdit.render();
+
+//   console.log(userEdit); //
+// } else {
+//   throw new Error('Root element not found');
+// }
+
+const users = new Collection(
+  'http://localhost:3000/users',
+  (json: UserProps) => {
+    return User.buildUser(json);
+  }
+);
+
+users.on('change', () => {
+  const root = document.getElementById('root');
+
+  if (root) {
+    new UserList(root, users).render();
+  }
+});
+users.fetch();
 
 // npm run start:parcel
 // npm run start:db
